@@ -116,7 +116,7 @@ The deployed Netlify domain has also been added to the Sanity CORS configuration
 - Live Website: https://agency2-portfolio.netlify.app
 - GitHub Repository: https://github.com/Nestorillo/agency2-portfolio
 - GitHub Project: https://github.com/users/Nestorillo/projects/6
-- Figma Prototype: https://www.figma.com/design/UioCuYHOFOyDF1ofItqqEZ/Agency-2-Portfolio?node-id=0-1&t=pkDgYcE35Q8FMZvu-1
+- Figma Prototype: https://www.figma.com/proto/UioCuYHOFOyDF1ofItqqEZ/Agency-2-Portfolio?node-id=0-1&t=pkDgYcE35Q8FMZvu-1
 
 ## Author
 
