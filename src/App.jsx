@@ -1,13 +1,88 @@
+import { useEffect, useState } from "react";
 import "./App.css";
+import { client, urlFor } from "./sanityClient";
 
 function App() {
+  const [content, setContent] = useState({
+    hero: null,
+    about: null,
+    skills: [],
+    projects: [],
+    contact: null,
+  });
+
+  useEffect(() => {
+    const query = `{
+    "hero": *[_type == "hero"][0]{
+  eyebrow,
+  title,
+  description,
+  name,
+  role,
+  availability,
+  "imageUrl": image.asset->url
+},
+
+      "about": *[_type == "about"][0]{
+        label,
+        title,
+        paragraphOne,
+        paragraphTwo,
+        topics,
+        image
+      },
+
+      "skills": *[_type == "skill"] | order(order asc){
+        _id,
+        name,
+        category,
+        icon,
+        order
+      },
+
+      "projects": *[_type == "project"] | order(order asc){
+        _id,
+        title,
+        description,
+        image,
+        technologies,
+        liveUrl,
+        githubUrl,
+        order
+      },
+
+      "contact": *[_type == "contact"][0]{
+        label,
+        title,
+        description,
+        email,
+        github,
+        linkedin,
+        availabilityTitle,
+        availabilitySubtitle,
+        availabilityText
+      }
+    }`;
+
+    client
+      .fetch(query)
+      .then((data) => {
+        setContent(data);
+      })
+      .catch((error) => {
+        console.error("Error loading Sanity content:", error);
+      });
+  }, []);
+
+  const { hero, about, skills, projects, contact } = content;
+
   return (
     <div className="app">
       {/* Navigation */}
       <header className="navbar">
         <div className="navbar__inner">
           <a href="#home" className="navbar__brand">
-            Alex Morgan
+            {hero?.name || "Alex Morgan"}
           </a>
 
           <nav className="navbar__links">
@@ -38,16 +113,11 @@ function App() {
         <section className="hero">
           <div className="hero__inner">
             <div className="hero__content">
-              <p className="hero__eyebrow">FRONT-END DEVELOPER</p>
+              <p className="hero__eyebrow">{hero?.eyebrow}</p>
 
-              <h1 className="hero__title">
-                Building modern digital experiences.
-              </h1>
+              <h1 className="hero__title">{hero?.title}</h1>
 
-              <p className="hero__text">
-                I create responsive and user-focused digital experiences with
-                modern front-end technologies.
-              </p>
+              <p className="hero__text">{hero?.description}</p>
 
               <div className="hero__actions">
                 <a href="#projects" className="button button--primary">
@@ -62,20 +132,21 @@ function App() {
 
             <div className="hero__card">
               <div className="hero__glow"></div>
-
-              <img
-                src="/alex-morgan.png"
-                alt="Alex Morgan"
-                className="hero__image"
-              />
+{hero?.imageUrl && (
+  <img
+    src={hero.imageUrl}
+    alt={hero?.name || "Alex Morgan"}
+    className="hero__image"
+  />
+)}
 
               <div className="hero__profile">
-                <h2>Alex Morgan</h2>
-                <p>Front-End Developer</p>
+                <h2>{hero?.name}</h2>
+                <p>{hero?.role}</p>
 
                 <span>
                   <i></i>
-                  Available for work
+                  {hero?.availability}
                 </span>
               </div>
             </div>
@@ -86,36 +157,30 @@ function App() {
         <section className="about" id="about">
           <div className="about__inner">
             <div className="about__card">
-              <p className="section-label">ABOUT ME</p>
+              <p className="section-label">{about?.label}</p>
 
               <div className="about__layout">
                 <div className="about__image-wrap">
-                  <img
-                    src="/alex-morgan.png"
-                    alt="Alex Morgan"
-                    className="about__image"
-                  />
+                  {about?.image && (
+                    <img
+                      src={urlFor(about.image).width(800).url()}
+                      alt={hero?.name || "Profile"}
+                      className="about__image"
+                    />
+                  )}
                 </div>
 
                 <div className="about__content">
-                  <h2>
-                    A developer focused on clean and useful digital experiences.
-                  </h2>
+                  <h2>{about?.title}</h2>
 
-                  <p>
-                    I'm a front-end developer with a strong interest in modern
-                    interfaces, responsive design and digital products.
-                  </p>
+                  <p>{about?.paragraphOne}</p>
 
-                  <p>
-                    I enjoy turning ideas into clear and accessible experiences,
-                    with a focus on maintainable code and thoughtful design.
-                  </p>
+                  <p>{about?.paragraphTwo}</p>
 
                   <div className="about__topics">
-                    <span>Frontend Development</span>
-                    <span>Responsive Design</span>
-                    <span>UI Implementation</span>
+                    {about?.topics?.map((topic) => (
+                      <span key={topic}>{topic}</span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -137,53 +202,19 @@ function App() {
               </p>
 
               <div className="skills__grid">
-                <article className="skill-card">
-                  <img src="/icons/html5.svg" alt="" />
-                  <h3>HTML</h3>
-                  <p>Markup Language</p>
-                </article>
+                {skills.map((skill) => (
+                  <article className="skill-card" key={skill._id}>
+                    {skill.icon && (
+                      <img
+                        src={urlFor(skill.icon).width(100).height(100).url()}
+                        alt={`${skill.name} icon`}
+                      />
+                    )}
 
-                <article className="skill-card">
-                  <img src="/icons/css3.svg" alt="" />
-                  <h3>CSS</h3>
-                  <p>Styling &amp; Layout</p>
-                </article>
-
-                <article className="skill-card">
-                  <img src="/icons/javascript.svg" alt="" />
-                  <h3>JavaScript</h3>
-                  <p>Web Development</p>
-                </article>
-
-                <article className="skill-card">
-                  <img src="/icons/react.svg" alt="" />
-                  <h3>React</h3>
-                  <p>UI Library</p>
-                </article>
-
-                <article className="skill-card">
-                  <img src="/icons/github.svg" alt="" />
-                  <h3>GitHub</h3>
-                  <p>Code Hosting</p>
-                </article>
-
-                <article className="skill-card">
-                  <img src="/icons/git.svg" alt="" />
-                  <h3>Git</h3>
-                  <p>Version Control</p>
-                </article>
-
-                <article className="skill-card">
-                  <img src="/icons/figma.svg" alt="" />
-                  <h3>Figma</h3>
-                  <p>UI / UX Design</p>
-                </article>
-
-                <article className="skill-card">
-                  <img src="/icons/sanity.svg" alt="" />
-                  <h3>Sanity</h3>
-                  <p>Content Platform</p>
-                </article>
+                    <h3>{skill.name}</h3>
+                    <p>{skill.category}</p>
+                  </article>
+                ))}
               </div>
             </div>
           </div>
@@ -202,98 +233,51 @@ function App() {
             </p>
 
             <div className="projects__grid">
-              <article className="project-card">
-                <img
-                  src="/projects/travelio.jpg"
-                  alt="Travelio project preview"
-                  className="project-card__image"
-                />
+              {projects.map((project) => (
+                <article className="project-card" key={project._id}>
+                  {project.image && (
+                    <img
+                      src={urlFor(project.image).width(800).height(450).url()}
+                      alt={`${project.title} project preview`}
+                      className="project-card__image"
+                    />
+                  )}
 
-                <h3>Travelio</h3>
+                  <h3>{project.title}</h3>
 
-                <p>
-                  A responsive travel platform designed to help users discover
-                  destinations and plan their next adventure.
-                </p>
+                  <p>{project.description}</p>
 
-                <div className="project-card__tags">
-                  <span>React</span>
-                  <span>CSS</span>
-                  <span>JavaScript</span>
-                </div>
+                  <div className="project-card__tags">
+                    {project.technologies?.map((technology) => (
+                      <span key={technology}>{technology}</span>
+                    ))}
+                  </div>
 
-                <div className="project-card__links">
-                  <a href="#" target="_blank" rel="noreferrer">
-                    Live Demo ↗
-                  </a>
+                  {(project.liveUrl || project.githubUrl) && (
+                    <div className="project-card__links">
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Live Demo ↗
+                        </a>
+                      )}
 
-                  <a href="#" target="_blank" rel="noreferrer">
-                    GitHub ↗
-                  </a>
-                </div>
-              </article>
-
-              <article className="project-card">
-                <img
-                  src="/projects/taskflow.jpg"
-                  alt="TaskFlow project preview"
-                  className="project-card__image"
-                />
-
-                <h3>TaskFlow</h3>
-
-                <p>
-                  A productivity dashboard for organising tasks, tracking
-                  progress and managing daily workflows.
-                </p>
-
-                <div className="project-card__tags">
-                  <span>React</span>
-                  <span>JavaScript</span>
-                  <span>CSS</span>
-                </div>
-
-                <div className="project-card__links">
-                  <a href="#" target="_blank" rel="noreferrer">
-                    Live Demo ↗
-                  </a>
-
-                  <a href="#" target="_blank" rel="noreferrer">
-                    GitHub ↗
-                  </a>
-                </div>
-              </article>
-
-              <article className="project-card">
-                <img
-                  src="/projects/shopsphere.jpg"
-                  alt="ShopSphere project preview"
-                  className="project-card__image"
-                />
-
-                <h3>ShopSphere</h3>
-
-                <p>
-                  A modern e-commerce interface focused on clear product
-                  discovery and a smooth shopping experience.
-                </p>
-
-                <div className="project-card__tags">
-                  <span>React</span>
-                  <span>Sanity</span>
-                  <span>CSS</span>
-                </div>
-
-                <div className="project-card__links">
-                  <a href="#" target="_blank" rel="noreferrer">
-                    Live Demo ↗
-                  </a>
-
-                  <a href="#" target="_blank" rel="noreferrer">
-                    GitHub ↗
-                  </a>
-                </div>
-              </article>
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          GitHub ↗
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -303,52 +287,54 @@ function App() {
           <div className="contact__inner">
             <div className="contact__card">
               <div className="contact__content">
-                <p className="section-label">CONTACT</p>
+                <p className="section-label">{contact?.label}</p>
 
-                <h2>Let's work together</h2>
+                <h2>{contact?.title}</h2>
 
-                <p className="contact__intro">
-                  I'm open to new opportunities, collaborations and interesting
-                  digital projects.
-                </p>
+                <p className="contact__intro">{contact?.description}</p>
 
                 <div className="contact__links">
-                  <a href="mailto:alex.morgan@example.com">
-                    <span>Email</span>
-                    <strong>→</strong>
-                    alex.morgan@example.com
-                  </a>
+                  {contact?.email && (
+                    <a href={`mailto:${contact.email}`}>
+                      <span>Email</span>
+                      <strong>→</strong>
+                      {contact.email}
+                    </a>
+                  )}
 
-                  <a href="#" target="_blank" rel="noreferrer">
-                    <span>GitHub</span>
-                    <strong>→</strong>
-                    github.com/alexmorgan
-                  </a>
+                  {contact?.github && (
+                    <div className="contact__info">
+                      <span>GitHub</span>
+                      <strong>→</strong>
+                      {contact.github}
+                    </div>
+                  )}
 
-                  <a href="#" target="_blank" rel="noreferrer">
-                    <span>LinkedIn</span>
-                    <strong>→</strong>
-                    linkedin.com/in/alexmorgan
-                  </a>
+                  {contact?.linkedin && (
+                    <div className="contact__info">
+                      <span>LinkedIn</span>
+                      <strong>→</strong>
+                      {contact.linkedin}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <aside className="contact__availability">
-                <h3>AVAILABLE FOR WORK</h3>
+                <h3>{contact?.availabilityTitle}</h3>
 
-                <strong>Have a project in mind?</strong>
+                <strong>{contact?.availabilitySubtitle}</strong>
 
-                <p>
-                  I'm currently available for freelance work and new
-                  opportunities.
-                </p>
+                <p>{contact?.availabilityText}</p>
 
-                <a
-                  href="mailto:alex.morgan@example.com"
-                  className="button button--primary"
-                >
-                  Let's Talk
-                </a>
+                {contact?.email && (
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="button button--primary"
+                  >
+                    Let's Talk
+                  </a>
+                )}
               </aside>
             </div>
           </div>
@@ -358,7 +344,7 @@ function App() {
       {/* Footer */}
       <footer className="footer">
         <div className="footer__inner">
-          <p>© 2026 Alex Morgan</p>
+          <p>© 2026 {hero?.name || "Alex Morgan"}</p>
           <p>Built with React &amp; Sanity</p>
         </div>
       </footer>

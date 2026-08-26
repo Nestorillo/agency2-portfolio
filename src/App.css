@@ -526,7 +526,8 @@
   margin-top: 28px;
 }
 
-.contact__links a {
+.contact__links a,
+.contact__info {
   min-width: 360px;
   padding: 16px;
   display: flex;
@@ -541,12 +542,14 @@
   text-decoration: none;
 }
 
-.contact__links a span {
+.contact__links a span,
+.contact__info span {
   color: #8b5cf6;
   font-weight: 600;
 }
 
-.contact__links a strong {
+.contact__links a strong,
+.contact__info strong {
   color: #9ca3af;
   font-weight: 400;
 }
@@ -877,14 +880,14 @@
     margin-top: 24px;
   }
 
-  .contact__links a {
-    width: 100%;
-    min-width: 0;
-    padding: 14px;
-    gap: 10px;
-    font-size: 13px;
-  }
-
+  .contact__links a,
+.contact__info {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  gap: 10px;
+  font-size: 13px;
+}
   .contact__availability {
     display: none;
   }
