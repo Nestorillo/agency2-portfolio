@@ -3,6 +3,8 @@ import "./App.css";
 import { client, urlFor } from "./sanityClient";
 
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const [content, setContent] = useState({
     hero: null,
     about: null,
@@ -85,13 +87,28 @@ function App() {
             {hero?.name || "Alex Morgan"}
           </a>
 
-          <nav className="navbar__links">
-            <a href="#about">About</a>
-            <a href="#skills">Skills</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
+          <nav className={`navbar__links ${menuOpen ? "navbar__links--open" : ""}`}>
+            <a href="#about" onClick={() => setMenuOpen(false)}>
+              About
+            </a>
 
-            <a href="#contact" className="navbar__cta">
+            <a href="#skills" onClick={() => setMenuOpen(false)}>
+              Skills
+            </a>
+
+            <a href="#projects" onClick={() => setMenuOpen(false)}>
+              Projects
+            </a>
+
+            <a href="#contact" onClick={() => setMenuOpen(false)}>
+              Contact
+            </a>
+
+            <a
+              href="#contact"
+              className="navbar__cta"
+              onClick={() => setMenuOpen(false)}
+            >
               Let's Talk
             </a>
           </nav>
@@ -99,7 +116,9 @@ function App() {
           <button
             className="navbar__menu"
             type="button"
-            aria-label="Open menu"
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(!menuOpen)}
           >
             <span></span>
             <span></span>
@@ -132,13 +151,13 @@ function App() {
 
             <div className="hero__card">
               <div className="hero__glow"></div>
-{hero?.imageUrl && (
-  <img
-    src={hero.imageUrl}
-    alt={hero?.name || "Alex Morgan"}
-    className="hero__image"
-  />
-)}
+              {hero?.imageUrl && (
+                <img
+                  src={hero.imageUrl}
+                  alt={hero?.name || "Alex Morgan"}
+                  className="hero__image"
+                />
+              )}
 
               <div className="hero__profile">
                 <h2>{hero?.name}</h2>

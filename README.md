@@ -58,7 +58,7 @@ The following content can be managed through Sanity:
 Changes published in Sanity are displayed on the React website.
 
 ## Project Structure
-
+```text
 agency2-portfolio/
 ├── docs/
 ├── public/
@@ -66,43 +66,43 @@ agency2-portfolio/
 ├── studio/
 ├── package.json
 └── README.md
-
+```
 The `studio` folder contains the Sanity Studio configuration and content schemas.
 
 ## Local Development
 
 Install the project dependencies:
-
+```bash
 npm install
-
+```
 Start the React development server:
-
+```bash
 npm run dev
-
+```
 The React application will normally run on:
-
+```text
 http://localhost:5173
-
+```
 ## Sanity Studio
 
 The Sanity Studio is located inside the `studio` folder.
 
 Move into the folder:
-
+```bash
 cd studio
-
+```
 Install the Studio dependencies:
-
+```bash
 npm install
-
+```
 Start Sanity Studio:
-
+```bash
 npm run dev
-
+```
 The Studio will normally run on:
-
+```text
 http://localhost:3333
-
+```
 ## Deployment
 
 The frontend is deployed with Netlify.
